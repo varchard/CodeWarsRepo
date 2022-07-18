@@ -1,0 +1,28 @@
+--https://www.codewars.com/kata/5818bde9559ff58bd90004a2/train/sql
+with actor_names as
+(select first_name || ' ' || last_name as name, actor_id
+from actor),
+name_film_actor as
+(select a.name, f.film_id
+from actor_names as a join film_actor as f
+on a.actor_id = f.actor_id),
+films_n_actors as
+(select a.name as first_actor, b.name as second_actor, a.film_id
+from name_film_actor as a join name_film_actor as b
+on a.film_id = b.film_id
+where a.name != b.name),
+counter as
+(select count(film_id), first_actor, second_actor
+from films_n_actors
+group by first_actor, second_actor
+order by count(film_id) desc
+limit 1),
+results as
+(select film_id, first_actor, second_actor
+from films_n_actors
+where first_actor = (select first_actor from counter)
+and second_actor = (select second_actor from counter))
+select f.title, r.first_actor, r.second_actor
+from results as r join film as f
+on f.film_id = r.film_id
+order by f.title
