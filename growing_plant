@@ -1,0 +1,19 @@
+--https://www.codewars.com/kata/58941fec8afa3618c9000184/train/sql
+
+create function height(desired_height integer, up_speed integer, down_speed integer) returns integer as $$
+declare
+height integer := 0;
+days integer := 0;
+begin
+while desired_height > height loop
+  days = days + 1;
+  height = height + up_speed;
+    if height >= desired_height then return days; end if;
+  height = height - down_speed;
+end loop;
+return days;
+end;
+$$ language plpgsql;
+
+select id, height(desired_height, up_speed, down_speed) as num_days
+from growing_plant;
